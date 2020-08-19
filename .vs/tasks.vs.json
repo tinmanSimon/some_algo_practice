@@ -1,0 +1,15 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-some_algo_practice",
+      "appliesTo": "learn_python.py",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "task-some_algo_practice",
+      "appliesTo": "/",
+      "type": "launch"
+    }
+  ]
+}
