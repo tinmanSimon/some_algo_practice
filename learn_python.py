@@ -473,4 +473,4 @@ def bool_eval(s, r):
     
     return helper(s, result, 0, len(s))
 
-
+print(bool_eval("1^1|0&0^1", True))
