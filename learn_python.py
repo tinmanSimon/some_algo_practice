@@ -488,6 +488,20 @@ def sorted_merge(A, B, n):
         i -= 1
     return
 
+def group_anagrams(strings):
+    #one line of python code, I love python:
+    #return sorted(strings, key=lambda elem: sorted(elem))
+    ht = {}
+    for string in strings:
+        new_str = "".join(sorted(string))
+        if new_str in ht:
+            ht[new_str].append(string)
+        else:
+            ht[new_str] = [string]
+    ret = []
+    for val in ht.values():
+        ret += val
+    return ret
 
 
 
