@@ -503,6 +503,33 @@ def group_anagrams(strings):
         ret += val
     return ret
 
+#A was originally in increasing order and has been rotated for some times.
+#returns the index of m if m exists, otherwise  returns -1.
+def rotate_binary_search(A, m):
+    l, r = 0, len(A) - 1
+    while(l <= r):
+        if A[l] == A[r]:
+            if A[l] == m: return l
+            l += 1
+            r -= 1
+            continue
 
+        mid = (l + r) // 2
+        if A[mid] == m:
+            return mid
+        #right is continuous
+        elif A[mid] < A[l]:
+            if m <= A[r] and m > A[mid]: l = mid + 1
+            else: r = mid - 1
+        #left is continuous
+        else:
+            if m >= A[l] and m < A[mid]: r = mid - 1
+            else: l = mid + 1
+    return -1
+
+
+A = [4,5,6,7,0,1,2]
+B = [2,1]
+print(rotate_binary_search(A, 0))
 
 
