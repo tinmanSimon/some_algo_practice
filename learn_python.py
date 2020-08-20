@@ -473,4 +473,22 @@ def bool_eval(s, r):
     
     return helper(s, result, 0, len(s))
 
-print(bool_eval("1^1|0&0^1", True))
+#n is A's actual length
+def sorted_merge(A, B, n):
+    n = n - 1
+    i, j = len(A) - 1, len(B) - 1
+    while(i >= 0):
+        if j < 0: return
+        elif n < 0 or A[n] <= B[j]:
+            A[i] = B[j]
+            j -= 1
+        else:
+            A[i] = A[n]
+            n -= 1
+        i -= 1
+    return
+
+
+
+
+
