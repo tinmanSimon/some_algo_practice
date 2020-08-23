@@ -1,5 +1,7 @@
 from collections import deque
+import bisect
 import math 
+from test import test
 
 def isUniqueTwo(s):
     last_c = ""
@@ -527,9 +529,119 @@ def rotate_binary_search(A, m):
             else: l = mid + 1
     return -1
 
+def sorted_matrx_search(M, t):
+    top, bottom = 0, len(M) - 1
+    target_layer = -1
+    if len(M) == 0 or len(M[0]) == 0: return [-1, -1]
+    while(top <= bottom):
+        mid = (top + bottom) // 2
+        if M[mid][0] <= t and t <= M[mid][-1]:
+            while(mid >= 0 and M[mid][0] <= t and t <= M[mid][-1]): 
+                target_layer = mid
+                mid -= 1
+            break
+        elif M[mid][0] > t:
+            bottom = mid - 1
+        else:
+            top = mid + 1
+    if target_layer == -1: return [-1, -1]
 
-A = [4,5,6,7,0,1,2]
-B = [2,1]
-print(rotate_binary_search(A, 0))
+    top, bottom = 0, len(M[0]) - 1
+    column_index = -1
+    while(top <= bottom):
+        mid = (top + bottom) // 2
+        if M[target_layer][mid] == t:
+            while(mid >= 0 and M[target_layer][mid] <= t and t <= M[target_layer][mid]): 
+                column_index = mid
+                mid -= 1
+            break
+        elif M[target_layer][mid] > t:
+            bottom = mid - 1
+        else:
+            top = mid + 1
+    if column_index == -1: return [-1, -1]
+    return [target_layer, column_index]
 
+#sort an array to make it a sequence of peaks and valleys
+#Time complexity O(n)
+def peaks_and_valleys(A):
+    for i in range(0, len(A) - 1):
+        if i & 1 and A[i] < A[i + 1]:
+            A[i], A[i + 1] = A[i + 1], A[i]
+        elif i & 1 == 0 and A[i] > A[i + 1]:
+            A[i], A[i + 1] = A[i + 1], A[i]
+    return A
 
+#find the longest sub string with k distinct characters
+def longest_sub_string(s, k):
+    if k < 1: return ""
+    ht = {}
+    str_start, str_end, max_start, max_end = 0, 0, 0, 0
+
+    def reset():
+        nonlocal str_start, str_end, max_start, max_end
+        if max_end - max_start < str_end - str_start:
+            max_start, max_end = str_start, str_end
+        while(len(ht.keys()) > k):
+            ht[s[str_start]] -= 1
+            if ht[s[str_start]] == 0: ht.pop(s[str_start])
+            str_start += 1
+
+    while(True):
+        if str_end == len(s): 
+            reset()
+            break
+        c = s[str_end]
+        if c in ht:
+            ht[c] += 1
+        else:
+            ht[c] = 1
+            if len(ht.keys()) > k: reset()
+        str_end += 1
+
+    return s[max_start: max_end]
+
+def longest_unique_substr(s):
+    ht = {}
+    str_start, max_start, max_end = 0, 0, 0
+    for ci in range(len(s)):
+        c = s[ci]
+        if c in ht and ht[c] > str_start: str_start = ht[c] + 1
+        ht[c] = ci
+        if max_end - max_start < ci - str_start:
+            max_start, max_end = str_start, ci
+    return s[max_start : max_end]
+
+#returns the longest substring with same letter and no more than k replacements.
+#returns the actual replacement times too, like how many times we replace letters.
+#Example: longest_same_letter_substr("aaabbbaaaabbaa", 2) -> ["aaaabbaa", 2]
+def longest_same_letter_substr(s, k):
+    ht = {}
+    str_start, max_start, max_end, used_k = 0, 0, 0, 0
+    target_c = ''
+    for str_end in range(len(s)):
+        if str_end == len(s) - 1:
+            z = 1
+        c = s[str_end]
+        if not c in ht: ht[c] = 1
+        else: ht[c] += 1
+        if target_c == '' or ht[c] > ht[target_c]:
+            target_c = c
+
+        #this is wrong 
+        if(str_end + 1 - str_start - ht[target_c] > k):
+            ht[s[str_start]] -= 1
+            str_start += 1
+
+        if str_end + 1 - str_start - ht[target_c] <= k and max_end - max_start < str_end - str_start:
+            max_start, max_end = str_start, str_end
+            used_k = str_end + 1 - str_start - ht[target_c]
+
+    return [s[max_start : max_end + 1], used_k]
+
+d = [
+    [["aaaaaaaaaabbaa", 3], ["aaaaaaaaaabbaa", 2]],
+    [["bbbccacccc", 2], ["bccacccc", 2]],
+    [["abbaabbbaabb", 0], ["bbb", 0]]
+    ]
+test(longest_same_letter_substr, d, lambda a, b: a == b)
